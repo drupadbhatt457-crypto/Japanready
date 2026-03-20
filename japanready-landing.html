@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JapanReady — Get Hired in Japan's Tech Industry</title>
+<meta name="description" content="AI-powered toolkit for engineers who want to work in Japan. Resume converter, JD matcher, JLPT vocab, Japanese cover letters — everything in one place.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=Noto+Sans+JP:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f7f4ef;
+    --bg2: #eeeae2;
+    --white: #fdfcfa;
+    --ink: #1a1612;
+    --ink2: #4a4540;
+    --ink3: #8a847c;
+    --red: #c0392b;
+    --red2: #e84c3d;
+    --red-light: #fdf0ee;
+    --red-border: rgba(192,57,43,0.2);
+    --border: rgba(26,22,18,0.1);
+    --border2: rgba(26,22,18,0.06);
+    --serif: 'DM Serif Display', Georgia, serif;
+    --sans: 'DM Sans', system-ui, sans-serif;
+    --jp: 'Noto Sans JP', sans-serif;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    line-height: 1.6;
+    font-size: 16px;
+    overflow-x: hidden;
+  }
+
+  /* NOISE TEXTURE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.4;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 40px;
+    background: rgba(247,244,239,0.88);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border2);
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: var(--ink);
+  }
+  .logo-mark {
+    width: 32px; height: 32px;
+    background: var(--ink);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--jp);
+    font-size: 16px;
+    color: white;
+    line-height: 1;
+  }
+  .logo-text {
+    font-family: var(--serif);
+    font-size: 18px;
+    letter-spacing: 0.01em;
+  }
+  .nav-cta {
+    background: var(--ink);
+    color: white;
+    border: none;
+    padding: 10px 22px;
+    border-radius: 100px;
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .nav-cta:hover { background: var(--red); transform: translateY(-1px); }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 120px 24px 80px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Japanese characters decoration */
+  .jp-deco {
+    position: absolute;
+    font-family: var(--jp);
+    color: var(--ink);
+    opacity: 0.04;
+    font-weight: 500;
+    user-select: none;
+    pointer-events: none;
+  }
+  .jp-deco-1 { font-size: 180px; top: 8%; left: -3%; }
+  .jp-deco-2 { font-size: 140px; bottom: 5%; right: -2%; }
+  .jp-deco-3 { font-size: 100px; top: 35%; left: 4%; }
+  .jp-deco-4 { font-size: 120px; top: 20%; right: 3%; }
+
+  /* Torii gate SVG decoration */
+  .torii-deco {
+    position: absolute;
+    bottom: 0; left: 50%;
+    transform: translateX(-50%);
+    opacity: 0.04;
+    width: 320px;
+  }
+
+  .hero-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 7px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink2);
+    margin-bottom: 32px;
+    animation: fadeUp 0.6s ease both;
+  }
+  .kicker-dot {
+    width: 7px; height: 7px;
+    background: var(--red);
+    border-radius: 50%;
+    animation: pulse-dot 2s ease infinite;
+  }
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(0.8); }
+  }
+
+  .hero h1 {
+    font-family: var(--serif);
+    font-size: clamp(40px, 7vw, 76px);
+    line-height: 1.07;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    margin-bottom: 24px;
+    max-width: 820px;
+    animation: fadeUp 0.6s 0.1s ease both;
+  }
+  .hero h1 em {
+    font-style: italic;
+    color: var(--red);
+  }
+  .hero h1 .jp-inline {
+    font-family: var(--jp);
+    font-size: 0.85em;
+    color: var(--ink3);
+  }
+
+  .hero-sub {
+    font-size: 18px;
+    color: var(--ink2);
+    max-width: 520px;
+    margin-bottom: 48px;
+    line-height: 1.65;
+    font-weight: 300;
+    animation: fadeUp 0.6s 0.2s ease both;
+  }
+
+  /* WAITLIST FORM */
+  .form-wrap {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 32px;
+    width: 100%;
+    max-width: 480px;
+    box-shadow: 0 4px 40px rgba(26,22,18,0.07);
+    animation: fadeUp 0.6s 0.3s ease both;
+  }
+
+  .form-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .form-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .field {
+    margin-bottom: 14px;
+  }
+  .field label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--ink3);
+    margin-bottom: 6px;
+  }
+  .field input,
+  .field select,
+  .field textarea {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 15px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    appearance: none;
+  }
+  .field input:focus,
+  .field select:focus,
+  .field textarea:focus {
+    border-color: var(--ink);
+    box-shadow: 0 0 0 3px rgba(26,22,18,0.08);
+  }
+  .field textarea { resize: none; height: 76px; font-size: 14px; }
+  .field select {
+    background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 7L11 1' stroke='%238a847c' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 36px;
+    cursor: pointer;
+  }
+
+  .submit-btn {
+    width: 100%;
+    padding: 14px;
+    background: var(--ink);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-family: var(--sans);
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+    margin-top: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .submit-btn:hover { background: var(--red); transform: translateY(-1px); }
+  .submit-btn:active { transform: translateY(0); }
+
+  .form-note {
+    font-size: 12px;
+    color: var(--ink3);
+    text-align: center;
+    margin-top: 12px;
+  }
+
+  /* SUCCESS STATE */
+  .success-state {
+    display: none;
+    text-align: center;
+    padding: 20px 0;
+  }
+  .success-state .success-icon {
+    font-size: 48px;
+    margin-bottom: 12px;
+    display: block;
+  }
+  .success-state h3 {
+    font-family: var(--serif);
+    font-size: 22px;
+    margin-bottom: 8px;
+  }
+  .success-state p { color: var(--ink2); font-size: 14px; }
+
+  /* COUNTER */
+  .waitlist-count {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 20px;
+    font-size: 13px;
+    color: var(--ink3);
+    animation: fadeUp 0.6s 0.4s ease both;
+  }
+  .count-avatars {
+    display: flex;
+  }
+  .count-avatar {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    border: 2px solid var(--bg);
+    background: var(--bg2);
+    margin-left: -8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
+    font-family: var(--jp);
+    overflow: hidden;
+  }
+  .count-avatar:first-child { margin-left: 0; }
+  .count-avatar span { font-size: 14px; }
+
+  /* PROBLEMS SECTION */
+  .problems {
+    padding: 100px 24px;
+    max-width: 960px;
+    margin: 0 auto;
+  }
+  .section-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 14px;
+  }
+  .problems h2 {
+    font-family: var(--serif);
+    font-size: clamp(28px, 4vw, 44px);
+    line-height: 1.15;
+    margin-bottom: 52px;
+    max-width: 560px;
+  }
+  .problems-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+  .problem-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .problem-card:hover { border-color: rgba(26,22,18,0.2); transform: translateY(-2px); }
+  .problem-icon {
+    font-size: 28px;
+    margin-bottom: 14px;
+    display: block;
+  }
+  .problem-card h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .problem-card p {
+    font-size: 14px;
+    color: var(--ink2);
+    line-height: 1.65;
+  }
+
+  /* HOW IT WORKS */
+  .how {
+    background: var(--ink);
+    color: white;
+    padding: 100px 24px;
+  }
+  .how-inner {
+    max-width: 960px;
+    margin: 0 auto;
+  }
+  .how .section-label { color: rgba(255,255,255,0.4); }
+  .how h2 {
+    font-family: var(--serif);
+    font-size: clamp(28px, 4vw, 44px);
+    margin-bottom: 60px;
+    max-width: 480px;
+  }
+  .features-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  .feature {
+    padding: 32px 28px;
+    background: #1a1612;
+    transition: background 0.2s;
+    display: flex;
+    gap: 18px;
+    align-items: flex-start;
+  }
+  .feature:hover { background: #211d18; }
+  .feature-num {
+    font-family: var(--serif);
+    font-size: 36px;
+    color: var(--red);
+    line-height: 1;
+    flex-shrink: 0;
+    margin-top: -4px;
+  }
+  .feature h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: rgba(255,255,255,0.95);
+  }
+  .feature p {
+    font-size: 14px;
+    color: rgba(255,255,255,0.45);
+    line-height: 1.65;
+  }
+  .feature-jp {
+    font-family: var(--jp);
+    font-size: 11px;
+    color: var(--red);
+    opacity: 0.8;
+    margin-bottom: 6px;
+    display: block;
+  }
+
+  /* WHO IS THIS FOR */
+  .for-who {
+    padding: 100px 24px;
+    max-width: 960px;
+    margin: 0 auto;
+  }
+  .for-who h2 {
+    font-family: var(--serif);
+    font-size: clamp(28px, 4vw, 44px);
+    margin-bottom: 48px;
+    max-width: 520px;
+  }
+  .audience-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    background: var(--white);
+  }
+  .audience-item {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 22px 28px;
+    border-bottom: 1px solid var(--border2);
+    transition: background 0.15s;
+    cursor: default;
+  }
+  .audience-item:last-child { border-bottom: none; }
+  .audience-item:hover { background: var(--bg); }
+  .audience-check {
+    width: 24px; height: 24px;
+    background: var(--red-light);
+    border: 1px solid var(--red-border);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
+    color: var(--red);
+    flex-shrink: 0;
+  }
+  .audience-item p {
+    font-size: 15px;
+    color: var(--ink);
+    font-weight: 400;
+  }
+  .audience-item p strong { font-weight: 600; }
+
+  /* FINAL CTA */
+  .final-cta {
+    background: var(--white);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 100px 24px;
+    text-align: center;
+  }
+  .final-cta h2 {
+    font-family: var(--serif);
+    font-size: clamp(32px, 5vw, 56px);
+    margin-bottom: 16px;
+    line-height: 1.1;
+  }
+  .final-cta h2 em { font-style: italic; color: var(--red); }
+  .final-cta p {
+    color: var(--ink2);
+    font-size: 17px;
+    margin-bottom: 40px;
+    font-weight: 300;
+  }
+
+  /* FOOTER */
+  footer {
+    padding: 32px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 13px;
+    color: var(--ink3);
+  }
+  footer a { color: var(--ink3); text-decoration: none; }
+  footer a:hover { color: var(--ink); }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 640px) {
+    nav { padding: 16px 20px; }
+    .jp-deco { display: none; }
+    .problems-grid { grid-template-columns: 1fr; }
+    .features-list { grid-template-columns: 1fr; }
+    footer { flex-direction: column; gap: 12px; text-align: center; }
+    .form-wrap { padding: 24px 20px; }
+  }
+
+  /* SUBMIT LOADING STATE */
+  .submit-btn.loading {
+    opacity: 0.7;
+    pointer-events: none;
+  }
+  .submit-btn.loading::after {
+    content: '';
+    width: 16px; height: 16px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="logo">
+    <div class="logo-mark">日</div>
+    <span class="logo-text">JapanReady</span>
+  </a>
+  <a href="#waitlist" class="nav-cta">Join Waitlist →</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <!-- Decorative Japanese characters -->
+  <div class="jp-deco jp-deco-1">就</div>
+  <div class="jp-deco jp-deco-2">働</div>
+  <div class="jp-deco jp-deco-3">夢</div>
+  <div class="jp-deco jp-deco-4">道</div>
+
+  <div class="hero-kicker">
+    <span class="kicker-dot"></span>
+    Now building — Join early access
+  </div>
+
+  <h1>
+    Your AI co-pilot for<br>
+    getting hired in <em>Japan's</em><br>
+    tech industry
+  </h1>
+
+  <p class="hero-sub">
+    Resume converter, JD matcher, JLPT vocabulary, Japanese cover letter generator — 
+    everything an international engineer needs. In one place.
+  </p>
+
+  <!-- WAITLIST FORM -->
+  <div class="form-wrap" id="waitlist">
+    <div class="form-title">🎌 Join the waitlist</div>
+
+    <form id="waitlistForm" action="https://formspree.io/f/xeerdjkb" method="POST">
+      <div class="field">
+        <label>Your Name</label>
+        <input type="text" name="name" placeholder="Drupad Sharma" required>
+      </div>
+
+      <div class="field">
+        <label>Email Address</label>
+        <input type="email" name="email" placeholder="you@email.com" required>
+      </div>
+
+      <div class="field">
+        <label>What's your biggest challenge right now?</label>
+        <select name="biggest_challenge" required>
+          <option value="" disabled selected>Select one...</option>
+          <option value="resume">My resume doesn't match Japanese formats</option>
+          <option value="jlpt">JLPT prep is scattered across too many apps</option>
+          <option value="cover_letter">Writing a Japanese cover letter feels impossible</option>
+          <option value="job_search">Don't know which companies to target</option>
+          <option value="visa">Confused about visa / work permit process</option>
+          <option value="all">Honestly, all of the above 😭</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>How much would you pay for this?</label>
+        <select name="willingness_to_pay" required>
+          <option value="" disabled selected>Be honest — it helps us price it right</option>
+          <option value="free_only">Free only — I wouldn't pay</option>
+          <option value="under_10">$1–9/month</option>
+          <option value="10_20">$10–19/month</option>
+          <option value="20_30">$20–29/month</option>
+          <option value="30_plus">$30+/month if it actually works</option>
+        </select>
+      </div>
+
+      <button type="submit" class="submit-btn" id="submitBtn">
+        Reserve my spot — it's free
+      </button>
+      <p class="form-note">🔒 No spam. Unsubscribe anytime. We hate junk mail too.</p>
+    </form>
+
+    <!-- Success state (shown after submit) -->
+    <div class="success-state" id="successState">
+      <span class="success-icon">🎌</span>
+      <h3>You're on the list!</h3>
+      <p>We'll email you the moment JapanReady is ready for early access.<br>
+      Arigato for your interest — <strong>ありがとう</strong> 🙏</p>
+    </div>
+  </div>
+
+  <div class="waitlist-count">
+    <div class="count-avatars">
+      <div class="count-avatar"><span>🇮🇳</span></div>
+      <div class="count-avatar"><span>🇧🇷</span></div>
+      <div class="count-avatar"><span>🇻🇳</span></div>
+      <div class="count-avatar"><span>🇵🇰</span></div>
+    </div>
+    <span><strong id="count-num">47</strong> engineers already waiting</span>
+  </div>
+</section>
+
+<!-- PROBLEMS -->
+<section class="problems">
+  <div class="section-label">The Problem</div>
+  <h2>Getting a Japan tech job is hard. The tools make it harder.</h2>
+
+  <div class="problems-grid">
+    <div class="problem-card">
+      <span class="problem-icon">📄</span>
+      <h3>Japanese resume format is completely different</h3>
+      <p>Rirekisho, shokumu keirekisho, self-PR — none of your existing resume templates work. You start from zero every time.</p>
+    </div>
+    <div class="problem-card">
+      <span class="problem-icon">🎯</span>
+      <h3>Job descriptions you can't fully understand</h3>
+      <p>You paste JDs into Google Translate, but you still don't know if your skills actually match what they're looking for.</p>
+    </div>
+    <div class="problem-card">
+      <span class="problem-icon">📚</span>
+      <h3>JLPT prep scattered across 5 different apps</h3>
+      <p>Anki for vocab, Bunpro for grammar, WaniKani for kanji — you spend more time switching apps than actually studying.</p>
+    </div>
+    <div class="problem-card">
+      <span class="problem-icon">✍️</span>
+      <h3>No idea how to write a Japanese cover letter</h3>
+      <p>Japanese business writing has specific keigo rules and formats. Getting it wrong tells the recruiter you don't understand Japanese work culture.</p>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how">
+  <div class="how-inner">
+    <div class="section-label">The Solution</div>
+    <h2>Everything you need to land a Japan tech job.</h2>
+
+    <div class="features-list">
+      <div class="feature">
+        <div class="feature-num">01</div>
+        <div>
+          <span class="feature-jp">履歴書コンバーター</span>
+          <h3>Resume Converter</h3>
+          <p>Paste your existing resume. Get a Japan-ready rirekisho + shokumu keirekisho instantly. Formatted, translated, culturally adapted.</p>
+        </div>
+      </div>
+      <div class="feature">
+        <div class="feature-num">02</div>
+        <div>
+          <span class="feature-jp">JDマッチング</span>
+          <h3>JD Matcher</h3>
+          <p>Paste any Japanese job description. Instantly see your match %, which skills you need, and what to highlight in your application.</p>
+        </div>
+      </div>
+      <div class="feature">
+        <div class="feature-num">03</div>
+        <div>
+          <span class="feature-jp">JLPT単語</span>
+          <h3>JLPT Vocabulary Engine</h3>
+          <p>Tech vocabulary + JLPT prep in one. Learn the words actually used in Japanese software companies — not just textbook Japanese.</p>
+        </div>
+      </div>
+      <div class="feature">
+        <div class="feature-num">04</div>
+        <div>
+          <span class="feature-jp">カバーレター</span>
+          <h3>Japanese Cover Letter AI</h3>
+          <p>Answer a few questions in English. Get a polished Japanese cover letter with correct keigo — ready to send to recruiters.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHO IS THIS FOR -->
+<section class="for-who">
+  <div class="section-label">Who It's For</div>
+  <h2>This is for you, if...</h2>
+
+  <div class="audience-list">
+    <div class="audience-item">
+      <div class="audience-check">✓</div>
+      <p>You're a <strong>CS or engineering student/graduate</strong> targeting Japan tech companies like Mercari, LINE, Sony, Rakuten, or Fujitsu</p>
+    </div>
+    <div class="audience-item">
+      <div class="audience-check">✓</div>
+      <p>You're <strong>studying JLPT N3, N2, or N1</strong> and want to accelerate your tech vocabulary alongside your grammar</p>
+    </div>
+    <div class="audience-item">
+      <div class="audience-check">✓</div>
+      <p>You've applied to Japanese companies before but <strong>never heard back</strong> — and suspect your resume format is the problem</p>
+    </div>
+    <div class="audience-item">
+      <div class="audience-check">✓</div>
+      <p>You're from <strong>India, Southeast Asia, Brazil, or anywhere outside Japan</strong> — and you want to navigate the application process without a guide inside</p>
+    </div>
+    <div class="audience-item">
+      <div class="audience-check">✓</div>
+      <p>You want to move to Japan in the <strong>next 1–3 years</strong> and are actively preparing your career path right now</p>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="final-cta">
+  <div class="section-label">Early Access</div>
+  <h2>Be first when<br><em>JapanReady</em> launches.</h2>
+  <p>No credit card. No commitment. Just early access + founding member pricing.</p>
+  <a href="#waitlist" class="nav-cta" style="font-size:16px; padding:14px 32px; border-radius:100px; display:inline-block;">
+    Join the waitlist — it's free →
+  </a>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="logo">
+    <div class="logo-mark" style="width:24px;height:24px;font-size:12px;">日</div>
+    <span style="font-family:var(--serif);font-size:15px;">JapanReady</span>
+  </div>
+  <span>Built by someone who's doing this journey too 🇮🇳→🇯🇵</span>
+  <a href="/cdn-cgi/l/email-protection#a4ccc1c8c8cbe4cec5d4c5cad6c1c5c0dd8ac5d4d4"><span class="__cf_email__" data-cfemail="aec6cbc2c2c1eec4cfdecfc0dccbcfcad780cfdede">[email&#160;protected]</span></a>
+</footer>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  // ─── FORM SUBMISSION ───────────────────────────────────────────────────────
+  // Currently saves to localStorage for demo.
+  // TO CONNECT REAL EMAIL COLLECTION:
+  //   1. Go to formspree.io → New Form → Get your form ID
+  //   2. Replace the action URL below with: https://formspree.io/f/YOUR_FORM_ID
+  //   3. Delete the e.preventDefault() line
+  //
+  // OR use Tally.so → embed their form here instead.
+
+  const form = document.getElementById('waitlistForm');
+  const successState = document.getElementById('successState');
+  const submitBtn = document.getElementById('submitBtn');
+  const countEl = document.getElementById('count-num');
+
+  // Load count from localStorage
+  let signupCount = parseInt(localStorage.getItem('jr_count') || '47');
+  countEl.textContent = signupCount;
+
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    submitBtn.classList.add('loading');
+    submitBtn.textContent = '';
+
+    const data = new FormData(form);
+    const res = await fetch('https://formspree.io/f/xeerdjkb', {
+      method: 'POST', body: data,
+      headers: { 'Accept': 'application/json' }
+    });
+    if (!res.ok) {
+      submitBtn.classList.remove('loading');
+      submitBtn.textContent = 'Something went wrong — try again';
+      return;
+    }
+
+    // Success!
+    form.style.display = 'none';
+    successState.style.display = 'block';
+
+    // Update count
+    signupCount++;
+    localStorage.setItem('jr_count', signupCount);
+    countEl.textContent = signupCount;
+  });
+
+  // ─── SMOOTH SCROLL ──────────────────────────────────────────────────────────
+  document.querySelectorAll('a[href="#waitlist"]').forEach(a => {
+    a.addEventListener('cl
