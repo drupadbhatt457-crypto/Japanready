@@ -619,7 +619,7 @@
       <div class="field">
         <label>Email Address</label>
         <input type="email" name="email" id="emailInput" placeholder="you@email.com" required autocomplete="email" oninput="validateEmail(this)">
-        <span id="emailError" style="display:none; font-size:12px; color:#c0392b; margin-top:5px;">&#9888; Please enter a valid email like name@gmail.com</span>
+        <span id="emailError" style="display:none; font-size:12px; color:#c0392b; margin-top:5px;">&#9888; Please enter a valid email like <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="a2ccc3cfc7e2c5cfc3cbce8cc1cdcf">[email&#160;protected]</a></span>
       </div>
 
       <div class="field">
@@ -794,7 +794,7 @@
   <a href="/cdn-cgi/l/email-protection#a4ccc1c8c8cbe4cec5d4c5cad6c1c5c0dd8ac5d4d4"><span class="__cf_email__" data-cfemail="aec6cbc2c2c1eec4cfdecfc0dccbcfcad780cfdede">[email&#160;protected]</span></a>
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
   // ─── FORM SUBMISSION ───────────────────────────────────────────────────────
   // Currently saves to localStorage for demo.
   // TO CONNECT REAL EMAIL COLLECTION:
@@ -813,14 +813,38 @@
   let signupCount = parseInt(localStorage.getItem('jr_count') || '47');
   countEl.textContent = signupCount;
 
-  function validateEmail(input) {
+  const FAKE_DOMAINS = [
+    'mailinator.com','guerrillamail.com','tempmail.com','throwaway.email',
+    'yopmail.com','sharklasers.com','guerrillamailblock.com','grr.la',
+    'guerrillamail.info','spam4.me','trashmail.com','dispostable.com',
+    'mailnull.com','spamgourmet.com','spamgourmet.net','spamgourmet.org',
+    'spamherelots.com','spamhereplease.com','tempr.email','discard.email',
+    'maildrop.cc','mailnesia.com','mailnull.com','spamgourmet.com',
+    'asds.com','xyz.com','test.com','example.com','fake.com','fakeemail.com',
+    'nowhere.com','invalid.com','noemail.com','nospam.com'
+  ];
+
+  function isEmailReal(email) {
     const regex = /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/;
+    if (!regex.test(email)) return false;
+    const domain = email.split('@')[1].toLowerCase();
+    if (FAKE_DOMAINS.includes(domain)) return false;
+    const localPart = email.split('@')[0];
+    if (localPart.length < 3) return false;
+    const domainName = domain.split('.')[0];
+    if (domainName.length < 3) return false;
+    const allConsonants = /^[^aeiou]{5,}$/i;
+    if (allConsonants.test(localPart) || allConsonants.test(domainName)) return false;
+    return true;
+  }
+
+  function validateEmail(input) {
     const err = document.getElementById('emailError');
-    if (!regex.test(input.value)) {
+    if (!isEmailReal(input.value)) {
       input.style.borderColor = '#c0392b';
       err.style.display = 'block';
     } else {
-      input.style.borderColor = '';
+      input.style.borderColor = '#2ecc71';
       err.style.display = 'none';
     }
   }
@@ -829,8 +853,7 @@
     e.preventDefault();
 
     const emailInput = document.getElementById('emailInput');
-    const regex = /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/;
-    if (!regex.test(emailInput.value)) {
+    if (!isEmailReal(emailInput.value)) {
       emailInput.style.borderColor = '#c0392b';
       document.getElementById('emailError').style.display = 'block';
       emailInput.focus();
@@ -861,6 +884,4 @@
     countEl.textContent = signupCount;
   });
 
-  // ─── SMOOTH SCROLL ──────────────────────────────────────────────────────────
-  document.querySelectorAll('a[href="#waitlist"]').forEach(a => {
-    a.addEventListener('cl
+  // ─── SMOOTH SCROLL ──────────────
